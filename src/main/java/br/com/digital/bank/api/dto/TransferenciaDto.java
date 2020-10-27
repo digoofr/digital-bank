@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class TransferenciaDto {
     @NotNull
-    private Long contaDoSolicitante;
-    @NotNull
     private Double valor;
+    @NotNull
+    private Long contaDoSolicitante;
     @NotNull
     private Long contaDoBeneficiario;
 }

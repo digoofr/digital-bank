@@ -6,9 +6,7 @@ import br.com.digital.bank.api.domain.PessoaFisica;
 import br.com.digital.bank.api.dto.ContaDto;
 import br.com.digital.bank.api.dto.ResponseDto;
 import br.com.digital.bank.api.dto.TransferenciaDto;
-import br.com.digital.bank.api.exception.DomainException;
 import br.com.digital.bank.api.service.ContaService;
-import br.com.digital.bank.api.utils.CPFCNPJUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,9 +28,31 @@ public class ContaController {
     @Autowired
     private ContaService contaService;
 
+    @PostMapping
+    public ResponseEntity<ResponseDto> criar(@Valid @RequestBody ContaDto contaDto) {
+        log.info("Ordem de nova conta: {}", contaDto);
+
+        Conta conta = transf(contaDto);
+
+        conta.setNumeroConta(contaService.gerarNumeroDaConta());
+        contaService.verificarLimiteAoCriarConta(conta);
+        contaService.verificarCpfVazio(contaDto.getPessoaFisica().getCpf());
+        contaService.verificarCpfInvalido(contaDto.getPessoaFisica().getCpf());
+        contaService.create(conta);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDto(MSG_CONTA_CADASTRADA, conta));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDto> deletar(@PathVariable Long id) {
+        contaService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDto(MSG_CONTA_EXCLUIDA));
+    }
+
     @GetMapping
     public ResponseEntity<List<Conta>> listar() {
-        log.info("Buscar Contas");
+        log.info("Listar todas as Contas");
         return ResponseEntity.ok().body(contaService.findAll());
     }
 
@@ -41,17 +61,6 @@ public class ContaController {
         log.info("Buscar conta por numero da conta: {}", numeroDaConta);
         Conta conta = contaService.findByNumeroConta(numeroDaConta);
         return ResponseEntity.ok().body(conta);
-    }
-
-    @PostMapping
-    public ResponseEntity<ResponseDto> criar(@Valid @RequestBody ContaDto contaDto) {
-        log.info("Request to create conta: {}", contaDto);
-        Conta conta = toEntity(contaDto);
-        conta.setNumeroConta(contaService.gerarNumeroDaConta());
-        contaService.vereficarLimiteAoCriarConta(conta);
-        contaService.create(conta);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseDto(MSG_CONTA_CADASTRADA, conta));
     }
 
     @PutMapping("/depositos/{numeroDaConta}/{valor}")
@@ -65,7 +74,7 @@ public class ContaController {
     @PutMapping("/saques/{numeroDaConta}/{valor}")
     public ResponseEntity<ResponseDto> sacar(@PathVariable Long numeroDaConta, @PathVariable Double valor) {
         Conta conta = contaService.findByNumeroConta(numeroDaConta);
-        contaService.vereficarLimiteMinimo(valor);
+        contaService.verificarLimiteMinimo(valor);
         contaService.vereficarSaldoNaConta(conta, valor);
         contaService.sacar(conta, valor);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -77,18 +86,12 @@ public class ContaController {
         Conta contaSolicitante = contaService.findByNumeroConta(transferenciaDto.getContaDoSolicitante());
         Conta contaBeneficiario = contaService.findByNumeroConta(transferenciaDto.getContaDoBeneficiario());
         contaService.vereficarSaldoNaConta(contaSolicitante, transferenciaDto.getValor());
-        contaService.vereficarLimiteMinimo(transferenciaDto.getValor());
+        contaService.verificarLimiteMinimo(transferenciaDto.getValor());
         contaService.transferir(contaSolicitante, contaBeneficiario, transferenciaDto.getValor());
         return ResponseEntity.ok().body(new ResponseDto(MSG_TRANSFERENCIA_REALIZADA));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deletar(@PathVariable Long id) {
-        contaService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ResponseDto(MSG_CONTA_EXCLUIDA));
-    }
-
-    private Conta toEntity(ContaDto contaDto) {
+    private Conta transf(ContaDto contaDto) {
         Conta conta = new Conta();
         Pessoa pessoa = new Pessoa();
         PessoaFisica pessoaFisica = new PessoaFisica();

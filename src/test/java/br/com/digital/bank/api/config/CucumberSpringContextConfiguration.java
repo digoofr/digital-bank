@@ -34,27 +34,29 @@ public class CucumberSpringContextConfiguration {
     ContaRepository contaRepository;
 
     @DataTableType
-    public ContaDto contaDtoDataTable(Map<String,String> map) {
+    public ContaDto contaDtoDataTable(Map<String, String> map) {
         return new ContaDto(
-            map.get("Nome"),
-            map.get("Cpf"),
-            Double.parseDouble(map.get("Saldo"))
+                map.get("Nome"),
+                map.get("Cpf"),
+                Double.parseDouble(map.get("Saldo"))
         );
     }
+
     @DataTableType
     public Conta contaDataTable(Map<String, String> map) {
         Pessoa pessoa = new Pessoa();
         PessoaFisica pessoaFisica = new PessoaFisica();
         pessoa.setNome("teste");
         pessoaFisica.setCpf("0532266644");
-            return  new Conta(pessoa,Double.parseDouble(map.get("Saldo")),Long.parseLong(map.get("Numero Conta")));
+        return new Conta(pessoa, Double.parseDouble(map.get("Saldo")), Long.parseLong(map.get("Numero Conta")));
     }
+
     @DataTableType
-    public TransferenciaDto tranferenciaDataTable(Map<String,String> map) {
+    public TransferenciaDto tranferenciaDataTable(Map<String, String> map) {
         return new TransferenciaDto(
-          Long.parseLong(map.get("Conta do Solicitante")),
-          Double.parseDouble(map.get("Valor")),
-          Long.parseLong(map.get("Conta do Beneficiário"))
+                Double.parseDouble(map.get("Valor")),
+                Long.parseLong(map.get("Conta do Solicitante")),
+                Long.parseLong(map.get("Conta do Beneficiário"))
         );
     }
 

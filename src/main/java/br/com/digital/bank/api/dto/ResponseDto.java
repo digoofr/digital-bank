@@ -20,20 +20,20 @@ public class ResponseDto {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Conta> conta = new ArrayList<>();
 
-    private Exception erro;
+    private Exception exception;
 
     public ResponseDto(String mensagem) {
         this.mensagem = mensagem;
     }
 
-    public ResponseDto(String mensagem, Exception erro) {
-        this.mensagem = mensagem;
-        this.erro = erro;
-    }
-
     public ResponseDto(String mensagem, Conta conta) {
         this.mensagem = mensagem;
         this.conta.add(conta);
+    }
+
+    public ResponseDto(String mensagem, Exception exception) {
+        this.mensagem = mensagem;
+        this.exception = exception;
     }
 
 }

@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Exception {
-    private String titulo;
     private Integer status;
+    private String titulo;
 }

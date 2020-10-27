@@ -24,11 +24,10 @@ public class TransferenciaStepDefinitions extends StepDefs {
 
     @Quando("for executada a operação de transferência")
     public void for_executada_a_operação_de_transferência() throws Exception {
-        // TODO: 12/08/2020 virar chamada direta
         actions = mockMvc.perform(put("/contas/transferencias")
-                    .content(objectMapper.writeValueAsString(transferenciaDto))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                .content(objectMapper.writeValueAsString(transferenciaDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print());
     }
 

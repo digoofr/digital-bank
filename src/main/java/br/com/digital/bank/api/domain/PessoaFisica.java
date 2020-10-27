@@ -21,4 +21,11 @@ public class PessoaFisica extends Pessoa {
     @Column(name = "cpf", nullable = false, length = 11, unique = true)
     private String cpf;
 
+    /************************************************* GETTERS SETTERS /HASHCODE EQUALS /TOSTRING *************************************************/
+    public String getCpf() {
+        if(cpf == null){
+            setCpf("");
+        }
+        return cpf;
+    }
 }

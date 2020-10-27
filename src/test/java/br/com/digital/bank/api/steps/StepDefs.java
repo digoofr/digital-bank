@@ -19,6 +19,6 @@ public abstract class StepDefs {
 
     protected static ResultActions actions;
 
-    protected static List<Conta> listaDeContas = new ArrayList<>();
+    protected static List<Conta> contas = new ArrayList<>();
 
 }

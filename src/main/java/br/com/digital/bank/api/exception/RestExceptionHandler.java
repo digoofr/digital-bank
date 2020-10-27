@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +21,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         Exception exception = new Exception();
         exception.setStatus(status.value());
         exception.setTitulo(ex.getMessage());
-        ResponseDto responseDto = new ResponseDto("Um erro aconteceu!",exception);
+        ResponseDto responseDto = new ResponseDto("Erro!",exception);
         return handleExceptionInternal(ex,responseDto,new HttpHeaders(),status,request);
     }
 

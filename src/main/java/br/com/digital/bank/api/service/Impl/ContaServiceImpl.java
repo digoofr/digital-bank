@@ -1,16 +1,12 @@
 package br.com.digital.bank.api.service.Impl;
 
 import br.com.digital.bank.api.domain.Conta;
-import br.com.digital.bank.api.domain.Pessoa;
-import br.com.digital.bank.api.domain.PessoaFisica;
 import br.com.digital.bank.api.exception.DomainException;
 import br.com.digital.bank.api.exception.ResourceNotFoundException;
 import br.com.digital.bank.api.repository.ContaRepository;
 import br.com.digital.bank.api.service.ContaService;
 import br.com.digital.bank.api.utils.CPFCNPJUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -51,15 +47,32 @@ public class ContaServiceImpl implements ContaService {
     }
 
     @Override
-    public boolean vereficarLimiteAoCriarConta(Conta conta) {
+    public boolean verificarLimiteAoCriarConta(Conta conta) {
         if (conta.getSaldo() >= VALOR_MINIMO_NOVA_CONTA) {
             return true;
         } else {
             throw new DomainException(MSG_SALDO_INSUFICIENTE_NOVA_CONTA);
         }
     }
+
     @Override
-    public boolean vereficarLimiteMinimo(Double valor) {
+    public boolean verificarCpfVazio(String cpf) {
+        if (cpf.isEmpty() || cpf == null) {
+            throw new DomainException(MSG_CPF_VAZIO);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean verificarCpfInvalido(String cpf) {
+        if (!CPFCNPJUtils.isCpfValido(cpf)) {
+            throw new DomainException(MSG_CPF_INVALIDO);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean verificarLimiteMinimo(Double valor) {
         if (valor <= VALOR_MAXIMO_TRANSFERENCIA) {
             return true;
         } else {

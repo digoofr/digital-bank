@@ -11,26 +11,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @Slf4j
 public class SaqueStepDefinitions extends StepDefs {
 
-    private Double valorDeSaque;
+    private Double valorSaque;
 
     @Dado("que seja solicitado um saque de {string}")
     public void que_seja_solicitado_um_saque_de(String saque) {
-        valorDeSaque = Double.parseDouble(saque);
-        log.info("Valor de saque: {}", saque);
+        valorSaque = Double.parseDouble(saque);
+        log.info("Valor do saque: {}", saque);
     }
 
     @Quando("for executada a operação de saque")
     public void for_executada_a_operação_de_saque() throws Exception {
-        // TODO: 12/08/2020 virar chamada direta
-
-        Long numeroDaConta = listaDeContas.stream().findFirst().get().getNumeroConta();
+        Long numeroDaConta = contas.stream().findFirst().get().getNumeroConta();
 
         log.info(numeroDaConta.toString());
 
         actions = this.mockMvc
-                .perform(put("/contas/saques/" + numeroDaConta + "/"+ valorDeSaque)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                .perform(put("/contas/saques/" + numeroDaConta + "/" + valorSaque)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(print());
     }
 
